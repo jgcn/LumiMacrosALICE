@@ -67,6 +67,21 @@ void Init_parameters(Int_t Fill)
 		kg_Energy = 6369.0; // [GeV]
 	}
 
+	else if (Fill == 8379 || Fill == 9128)
+        {
+                kg_beta_x = kg_beta_y = 19.2; // [m]
+                kg_Qx = 62.31;
+                kg_Qy = 60.317;
+                kg_Energy = 6369.0; // [GeV]
+        }
+        else if (Fill == 9240)
+        {
+                kg_beta_x = kg_beta_y = 0.5; // [m]
+                kg_Qx = 62.31;
+                kg_Qy = 60.32;
+                kg_Energy = 6369.0; // [GeV]
+        }
+
 	return;
 }
 
