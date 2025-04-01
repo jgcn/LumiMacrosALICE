@@ -126,6 +126,7 @@ void Find_start_and_end_of_scans()
   Int_t n_vdm = g_vdm_Tree->GetEntries();
   Int_t found_scans = 0;
   Int_t idx=0;
+  if (g_vdm_Fill == 10298) idx = 7000;
   for(Int_t i=0;i<g_n_Scans_in_Fill;i++) {
     g_vdm_Tree->GetEntry(idx);
     while(plane!=1 && idx<n_vdm) { // find start of x-scan 
@@ -156,6 +157,7 @@ void Find_start_and_end_of_scans()
   // loop over tree to find y scans
   found_scans = 0;
   idx=0;
+  if (g_vdm_Fill == 10298) idx = 7000;
   bool fix8379 = true;
   for(Int_t i=0;i<g_n_Scans_in_Fill;i++) {
     g_vdm_Tree->GetEntry(idx);
