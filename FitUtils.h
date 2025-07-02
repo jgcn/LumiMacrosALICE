@@ -3,6 +3,7 @@
 
 #include "TDatime.h"
 #include "TRandom2.h"
+#include <TVirtualFitter.h>
 
 //-------------------------------------------------------
 // global variables
@@ -457,6 +458,7 @@ Double_t Fit_rate_separation(
 	TGraphErrors *gr = new TGraphErrors(n, sep, rate, NULL, rate_err);
 
 	// fit and check
+	TVirtualFitter::SetDefaultFitter("Minuit");
 	TFitResultPtr r = gr->Fit("fit_model", "Q0RS");
 	Double_t fitQuality = fit_model->GetChisquare()/((Double_t)fit_model->GetNDF()); //kimc
 	string dName = cName; //Temporal copy, to prevent contamination (kimc)
@@ -581,10 +583,13 @@ Double_t Fit_rate_separation(
     L1->SetBorderSize(0);
     L1->SetTextAlign(13);
     L1->AddEntry((TObject*)0, "ALICE", "");
-    L1->AddEntry((TObject*)0, "pp #sqrt{s} = 13 TeV", "");
+    if (g_vdm_Fill == 8379 || g_vdm_Fill == 9128 || g_vdm_Fill == 9644) L1->AddEntry((TObject*)0, "pp #sqrt{s} = 13.6 TeV", "");
+    if (g_vdm_Fill == 10298) L1->AddEntry((TObject*)0, "pp #sqrt{s} = 5.36 TeV", "");
+    if (g_vdm_Fill == 9240 || g_vdm_Fill == 10338) L1->AddEntry((TObject*)0, "PbPb #sqrt{s} = 5.36 TeV", "");
+
 	L1->Draw();
 
-	c1->Print(Form("%s.eps", c1->GetName()));
+	c1->Print(Form("Plots/%s.pdf", c1->GetName()));
 	#endif
 
 	//-------------------------------------------
