@@ -19,4 +19,12 @@ void QA_get_bcId(int fill)
   for(int i=0;i<nIBC;i++) {
     cout << "   bcID = " << bunches[i] << endl;
   }
+
+  // for C++ format
+  cout << "int bunchB[20] = {" << endl;
+  for(int i=0;i<(nIBC-1);i++) {
+    cout << bunches[i] << ",";
+  }
+  cout << bunches[nIBC-1] << "};" <<endl;
+
 }
