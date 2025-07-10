@@ -79,7 +79,7 @@ TH1D* GetHistogram(const char *rate_name, const char *rate_type,
 }
 
 void QA_hxhy_V0T0(Int_t Fill, const char *rate_type, const char *sep_type,
-              const char *intensity_type, Int_t fit_type,
+              const char *intensity_type, Int_t fit_type,      
               Bool_t save = kTRUE)
 {
     // initialize
@@ -87,11 +87,11 @@ void QA_hxhy_V0T0(Int_t Fill, const char *rate_type, const char *sep_type,
     Set_pointers_to_input_files_and_trees();
     TString name = "Ratio of h_{x}h_{y} #frac{T0}{V0}";
     
-    //Set histograms
-    TH1D* hxhy_V0_0 = GetHistogram("VBAandVBC",rate_type,sep_type,intensity_type,fit_type,0);
-    TH1D* hxhy_V0_1 = GetHistogram("VBAandVBC",rate_type,sep_type,intensity_type,fit_type,1);
-    TH1D* hxhy_T0_0 = GetHistogram("TVX",rate_type,sep_type,intensity_type,fit_type,0);
-    TH1D* hxhy_T0_1 = GetHistogram("TVX",rate_type,sep_type,intensity_type,fit_type,1);
+    //Set histograms    
+    TH1D* hxhy_V0_0 = GetHistogram("v0",rate_type,sep_type,intensity_type,fit_type,0);
+    TH1D* hxhy_V0_1 = GetHistogram("v0",rate_type,sep_type,intensity_type,fit_type,1);
+    TH1D* hxhy_T0_0 = GetHistogram("t0",rate_type,sep_type,intensity_type,fit_type,0);
+    TH1D* hxhy_T0_1 = GetHistogram("t0",rate_type,sep_type,intensity_type,fit_type,1);
 
     TH1D* ratio[2];
 	ratio[0] = (TH1D*)hxhy_T0_0->Clone("ratio_0");
@@ -178,7 +178,7 @@ void QA_hxhy_V0T0(Int_t Fill, const char *rate_type, const char *sep_type,
 		L1->SetBorderSize(0);
 		L1->SetFillStyle(3001);
 		L1->AddEntry((TObject*)0, "ALICE", "");
-		L1->AddEntry((TObject*)0, "pp #sqrt{s} = 13 TeV", "");
+		L1->AddEntry((TObject*)0, "pp #sqrt{s} = 13.6 TeV", "");
 		L1->Draw();
 
 		TLegend *L2 = new TLegend(0.15, 0.2, 0.35, 0.275);
