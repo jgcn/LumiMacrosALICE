@@ -101,8 +101,12 @@ void QA_comp_rate_vs_sep(Int_t Fill, const char *rate_name1, const char *rate_ty
 
 	Double_t *ratio = new Double_t[n_sep];
 	Double_t *ratio_err = new Double_t[n_sep];
+	int mid = (n_sep>>1)+1;
+	double r01 = rate1[mid];
+	double r02 = rate2[mid];	
 	for(int i=0;i<n_sep;i++) {
-	  ratio[i] = rate1[i]/rate2[i];
+	  ratio[i] = (rate1[i]/r01)/(rate2[i]/r02);
+	  // error computation not correct
 	  ratio_err[i] =ratio[i]*TMath::Sqrt(TMath::Power(rate_error1[i]/rate1[i],2)+TMath::Power(rate_error2[i]/rate2[i],2));
 	}
 	TGraphErrors *grR = new TGraphErrors(n_sep,sep2,ratio,NULL,ratio_err);
@@ -158,7 +162,7 @@ void QA_comp_rate_vs_sep(Int_t Fill, const char *rate_name1, const char *rate_ty
 	rvss_C->cd(2);
 	grR->Draw("");
 	TH1 *h = (TH1*) grR->GetHistogram();
-	h->SetTitle(Form(";separation (mm);%s/%s",rate_name1,rate_name2));
+	h->SetTitle(Form(";separation (mm);((%s/%s(0))/(%s/%s(0))",rate_name1,rate_name1,rate_name2,rate_name2));
 	//	rvss_C->Print(Form("c2a_QA_comp_rate_Fill%i_%s_%s_%s_scanT%i_scan%i_bc%i.%s",
 	//			Fill, rate_name, rate_type, sep_type, scan_type, scan, bc, FFormat));
 	

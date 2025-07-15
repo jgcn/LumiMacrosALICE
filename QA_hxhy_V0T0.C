@@ -85,7 +85,8 @@ void QA_hxhy_V0T0(Int_t Fill, const char *rate_name1, const char *rate_name2, co
     // initialize
     Set_input_file_names(Fill);
     Set_pointers_to_input_files_and_trees();
-    TString name = "Ratio of h_{x}h_{y} #frac{T0}{V0}";
+    // TString name = "Ratio of h_{x}h_{y} #frac{T0}{V0}";
+    TString name = Form("Ratio of h_{x}h_{y} #frac{%s}{%s}",rate_name1,rate_name2);
     
     //Set histograms
     TH1D* hxhy_V0_0 = GetHistogram(rate_name2,rate_type,sep_type,intensity_type,fit_type,0);
