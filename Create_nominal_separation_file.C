@@ -93,6 +93,7 @@ void Find_separations(Int_t scan_type, Int_t scan_num, Int_t IdxStart, Int_t Idx
 	TTree *sep_tree = new TTree("Separations","Separations");
 	char *txt_tmp = new char[kg_string_size];
 	sprintf(txt_tmp,"separation[%d]/D",counter-1);
+	if (g_vdm_Fill == 10813) sprintf(txt_tmp,"separation[%d]/D",counter);
 	sep_tree->Branch("separation",sep_array,txt_tmp);
 
 	// fill the same info for each bunch crossing

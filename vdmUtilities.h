@@ -122,20 +122,33 @@ void Find_start_and_end_of_scans()
   for(Int_t i=0;i<g_n_Scans_in_Fill;i++)
     g_Idx_Start_Scan_x[i]=g_Idx_Start_Scan_y[i]=g_Idx_End_Scan_x[i]=g_Idx_End_Scan_y[i]=-1;
 
+  // special case for NeNe
+  if (g_vdm_Fill == 10813) {
+    g_Idx_Start_Scan_x[0] = 200;
+    g_Idx_Start_Scan_y[0] = 335;    
+    g_Idx_End_Scan_x[0] = 335;
+    g_Idx_End_Scan_y[0] = 450;
+    return;
+  }
   // loop over tree to find x-scans
   Int_t n_vdm = g_vdm_Tree->GetEntries();
+  cout << " there are  " << n_vdm << " entries " << endl;
   Int_t found_scans = 0;
   Int_t idx=0;
   if (g_vdm_Fill == 10298) idx = 7000;
+  if (g_vdm_Fill == 10802) idx = 1000;
+  if (g_vdm_Fill == 10782) idx = 900;
   for(Int_t i=0;i<g_n_Scans_in_Fill;i++) {
     g_vdm_Tree->GetEntry(idx);
     while(plane!=1 && idx<n_vdm) { // find start of x-scan 
       idx++;
+      if (g_vdm_Fill == 10782 && idx>1700 && idx <2600) continue;
       g_vdm_Tree->GetEntry(idx);
     }
     g_Idx_Start_Scan_x[i]=idx;
     while(plane==1 && idx<n_vdm) { // find end of x-scan 
       idx++;
+      if (g_vdm_Fill == 10782 && idx>1700 && idx <2600) continue;
       g_vdm_Tree->GetEntry(idx);
     }
     g_Idx_End_Scan_x[i]=idx;
@@ -158,16 +171,20 @@ void Find_start_and_end_of_scans()
   found_scans = 0;
   idx=0;
   if (g_vdm_Fill == 10298) idx = 7000;
+  if (g_vdm_Fill == 10802) idx = 1000;
+  if (g_vdm_Fill == 10782) idx = 900;
   bool fix8379 = true;
   for(Int_t i=0;i<g_n_Scans_in_Fill;i++) {
     g_vdm_Tree->GetEntry(idx);
     while(plane!=2 && idx<n_vdm) { // find start of y-scan 
       idx++;
+      if (g_vdm_Fill == 10782 && idx>1700 && idx <2600) continue;
       g_vdm_Tree->GetEntry(idx);
     }
     g_Idx_Start_Scan_y[i]=idx;
     while(plane==2 && idx<n_vdm) { // find end of y-scan 
       idx++;
+      if (g_vdm_Fill == 10782 && idx>1700 && idx <2600) continue;
       g_vdm_Tree->GetEntry(idx);
     }
     g_Idx_End_Scan_y[i]=idx;
