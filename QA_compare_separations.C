@@ -29,6 +29,74 @@ void GetSeparation(Double_t *sep, const char *separation_name, Int_t scan, Int_t
 }
 
 //-------------------------------------------------------
+// compare NOM to ODC
+
+void QA_compare_NOMODC(Int_t Fill, Int_t scan, Int_t scan_type, Int_t bc)
+// scan_type: 1 => x-scan; 2 => y-scan
+{
+  // initialize
+  Set_input_file_names(Fill);
+  Set_pointers_to_input_files_and_trees();
+  
+  // reserve space for separations
+  Int_t n_sep = FindNumberSeparations(scan_type, scan);
+  Double_t *nom = new Double_t[n_sep];
+  Double_t *odc = new Double_t[n_sep];
+
+  // get the separations
+  GetSeparation(nom,"Nom",scan,scan_type,bc);
+  GetSeparation(odc,"ODC",scan,scan_type,bc);
+  
+  // make differences
+  Double_t *odc_nom = new Double_t[n_sep];
+   for(Int_t i=0;i<n_sep;i++) {
+    // factor of 1000 to go to mum
+    odc_nom[i] = (odc[i]-nom[i])*1000;
+   }
+
+  // define the limits for the plot
+  // --> separation
+  Double_t sep_min = 0;
+  Double_t sep_max = 0;
+  // --> separation diffs
+  Double_t dif_min = 0;
+  Double_t dif_max = 0;
+  for(Int_t i=0;i<n_sep;i++) {
+    if(nom[i]<sep_min) sep_min=nom[i];
+    if(nom[i]>sep_max) sep_max=nom[i];
+    if(odc_nom[i]<dif_min) dif_min=odc_nom[i];
+    if(odc_nom[i]>dif_max) dif_max=odc_nom[i];
+  }
+  sep_min*=1.2;
+  sep_max*=1.2;  
+  dif_min*=1.2;
+  dif_max*=1.2;  
+  
+  // make graphs
+  TGraph *gr_odc_nom = new TGraph(n_sep,nom,odc_nom);
+  gr_odc_nom->SetMarkerStyle(20);gr_odc_nom->SetMarkerColor(1);
+
+  // plot graphs
+  gStyle->SetOptStat(0);
+  gStyle->SetOptTitle(0);
+  TCanvas *sep_C = new TCanvas("sep_C","separation differences versus separation",600,400);
+  TH1F* frame = gPad->DrawFrame(sep_min,dif_min,sep_max,dif_max);
+  frame->SetTitle(";separation (mm); separation difference (#mum)");
+  gr_odc_nom->Draw("p,e1,same");
+   TLegend *legend = new TLegend(0.15,0.7,0.35,0.9);
+  legend->SetBorderSize(0);
+  legend->SetFillStyle(0);
+  legend->AddEntry(gr_odc_nom,"odc-nom","p");
+  legend->Draw();
+
+  // clean up
+  delete [] nom;
+  delete [] odc;
+   delete [] odc_nom;
+  
+}
+
+//-------------------------------------------------------
 // entry point
 
 void QA_compare_separations(Int_t Fill, Int_t scan, Int_t scan_type, Int_t bc)

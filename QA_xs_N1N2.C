@@ -148,9 +148,12 @@ void QA_xs_N1N2(Int_t Fill,
 	if (Fill == 4937) { V0C = 57.0; T0C = 29.0; }
 	if (Fill == 6012) { V0C = 56.5;	T0C = 27.7; }
 	if (Fill == 6864) { V0C = 56.5;	T0C = 27.5; }
-	if (Fill == 8379) { V0C = 51.0;	T0C = 53.5; }
-    if (!strcmp(rate_name, "v0")) { yMin = V0C-1.0; yMax = V0C+1.5; }
-    if (!strcmp(rate_name, "t0"))       { yMin = T0C-1.0; yMax = T0C+1.5; }
+	if (Fill == 8379) { V0C = 48.0;	T0C = 51; }
+ 	if (Fill == 9128) { V0C = 51;	T0C = 52; }
+	if (!strcmp(rate_name, "aodV0")) { yMin = V0C-2.5; yMax = V0C+2.5; }
+	if (!strcmp(rate_name, "aodT0"))       { yMin = T0C-2.5; yMax = T0C+2.5; }
+	if (!strcmp(rate_name, "v0")) { yMin = V0C-2.5; yMax = V0C+2.5; }
+	if (!strcmp(rate_name, "t0"))       { yMin = T0C-2.5; yMax = T0C+2.5; }
 	TCanvas *c1 = new TCanvas("c1","xs_histo", 1600, 800);
 	c1->cd()->SetBottomMargin(0.125);
 
@@ -180,13 +183,14 @@ void QA_xs_N1N2(Int_t Fill,
 	if (Fill == 6012) YEAR = 2017;
 	if (Fill == 6864) YEAR = 2018;
 	if (Fill == 8379) YEAR = 2022;
+	if (Fill == 9128) YEAR = 2023;
 	TLegend *L1 = new TLegend(0.145, 0.65, 0.35, 0.85);
 	L1->SetMargin(0);
 	L1->SetBorderSize(0);
 	L1->SetFillStyle(3001);
 	L1->AddEntry((TObject*)0, "ALICE", "");
 	L1->AddEntry((TObject*)0, "pp #sqrt{s} = 13.6 TeV", "");
-	L1->AddEntry((TObject*)0, Form("%i, %s, scan %i", YEAR, (!strcmp(rate_name,"v0"))?"FDD":"FT0",scan), "");
+	L1->AddEntry((TObject*)0, Form("%i, %s, %s, %s, scan %i", YEAR, rate_name,intensity_type, g_fit_model_name[fit_type], scan), "");
 	L1->Draw();
 
 	TLegend *L2 = new TLegend(0.6, 0.735, 0.875, 0.85);
@@ -198,7 +202,8 @@ void QA_xs_N1N2(Int_t Fill,
 	L2->AddEntry((TObject*)0, Form("%5.3f #pm %4.3f", F1pol0->GetParameter(0), F1pol0->GetParError(0)), "");
 	L2->Draw();
 
-	c1->Print(Form("Fill%i_xsN1N2_%s_%i.eps", Fill, (!strcmp(rate_name,"v0"))?"FDD":"FT0", scan));
+	c1->Print(Form("xsPlots/xsFill%d_%sRate_%s_%sSep_%s_Scan_%d_Fit_%s.pdf",
+		       g_vdm_Fill,rate_type,rate_name,sep_type,intensity_type,scan,g_fit_model_name[fit_type]));
 	#endif
 
 	#if 0
@@ -226,7 +231,7 @@ void QA_xs_N1N2(Int_t Fill,
 	L1->SetFillStyle(3001);
     L1->SetMargin(0.3);
     L1->Draw();	
-	c1->Print(Form("c3b_XSvsN1N2_%s.%s", TYPE, FFormat)); //kimc
+	c1->Print(Form("xsPlots/c3b_XSvsN1N2_%s.%s", TYPE, FFormat)); //kimc
 	#endif
 
 	// clean

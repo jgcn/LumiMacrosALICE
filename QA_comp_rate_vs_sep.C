@@ -103,16 +103,18 @@ void QA_comp_rate_vs_sep(Int_t Fill, const char *rate_name1, const char *rate_ty
 	Double_t *ratio_err = new Double_t[n_sep];
 	int mid = (n_sep>>1)+1;
 	double r01 = rate1[mid];
-	double r02 = rate2[mid];	
+	double r02 = rate2[mid];
+	std::cout << " r02/r01 = " << (r02/r01) << endl;
 	for(int i=0;i<n_sep;i++) {
-	  ratio[i] = (rate1[i]/r01)/(rate2[i]/r02);
+	  // ratio[i] = (rate1[i]/r01)/(rate2[i]/r02);
+	  ratio[i] = rate1[i]/rate2[i];
 	  // error computation not correct
 	  ratio_err[i] =ratio[i]*TMath::Sqrt(TMath::Power(rate_error1[i]/rate1[i],2)+TMath::Power(rate_error2[i]/rate2[i],2));
 	}
 	TGraphErrors *grR = new TGraphErrors(n_sep,sep2,ratio,NULL,ratio_err);
 	grR->SetMarkerStyle(20);
 	grR->SetMarkerColor(kBlack);
-	grR->Draw();
+	//	grR->Draw();
 	//-------------------------------------------------------
 	// now plot
 	//-------------------------------------------------------
@@ -141,12 +143,15 @@ void QA_comp_rate_vs_sep(Int_t Fill, const char *rate_name1, const char *rate_ty
 
 	// plot TGraph
 	gStyle->SetOptStat(0);
-	gStyle->SetOptTitle(0);
-	TCanvas *rvss_C = new TCanvas("rvss_C","rate versus separation",900,400);
+	gStyle->SetOptTitle(1);
+	gStyle->SetOptFit(1);
+
+	TCanvas *rvss_C = new TCanvas(Form("rate1_%s_rate2_%s_fill_%i_scan_%i_dir_%i_bc_%i",
+					   rate_name1,rate_name2,Fill,scan,scan_type,bc),"rate versus separation",900,400);
 	rvss_C->Divide(2,1);
 	rvss_C->cd(1);
 	TH1F* frame = gPad->DrawFrame(sep_min,0.001,sep_max,rate_max);
-	frame->SetTitle(";separation (mm); rate (Hz)");
+	frame->SetTitle(Form("fill %i, scan %i, dir %i, bc %i;separation (mm); rate (Hz)",Fill,scan,scan_type,bc));
 	gr1->Draw("p,e1,same");
 	gr2->Draw("p,e1,same");
 	TLatex* txt = new TLatex();
@@ -161,9 +166,27 @@ void QA_comp_rate_vs_sep(Int_t Fill, const char *rate_name1, const char *rate_ty
    
 	rvss_C->cd(2);
 	grR->Draw("");
+	grR->Fit("pol0");
 	TH1 *h = (TH1*) grR->GetHistogram();
-	h->SetTitle(Form(";separation (mm);((%s/%s(0))/(%s/%s(0))",rate_name1,rate_name1,rate_name2,rate_name2));
-	//	rvss_C->Print(Form("c2a_QA_comp_rate_Fill%i_%s_%s_%s_scanT%i_scan%i_bc%i.%s",
-	//			Fill, rate_name, rate_type, sep_type, scan_type, scan, bc, FFormat));
+	h->SetTitle(Form(";separation (mm);%s/%s",rate_name1,rate_name2));
+       	rvss_C->Print(Form("aodPlots/rate1_%s_rate2_%s_fill_%i_bc_%i_scan_%i_dir_%i.pdf",
+			   rate_name1,rate_name2,Fill,bc,scan,scan_type));
 	
 }
+
+
+void doFill(const char *rate_name1, const char *rate_name2, int fill, int nBC = 20)
+{
+  for(int iBC=0;iBC<nBC;iBC++) {  
+    QA_comp_rate_vs_sep(fill,rate_name1,"Raw","Nom",rate_name2,"Raw","Nom",1,0,iBC);
+    QA_comp_rate_vs_sep(fill,rate_name1,"Raw","Nom",rate_name2,"Raw","Nom",2,0,iBC);
+    QA_comp_rate_vs_sep(fill,rate_name1,"Raw","Nom",rate_name2,"Raw","Nom",1,1,iBC);
+    QA_comp_rate_vs_sep(fill,rate_name1,"Raw","Nom",rate_name2,"Raw","Nom",2,1,iBC);    
+  }
+  /*
+to merge use
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=merged.pdf *pdf
+  */
+}
+
+

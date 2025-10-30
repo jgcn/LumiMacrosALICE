@@ -24,14 +24,22 @@ void QA_print_timestamps(Int_t Fill, Int_t scan)
 	Long64_t time_separation_end_x;
 	Long64_t time_separation_start_y;
 	Long64_t time_separation_end_y;
+	int idx_separation_start_x;
+	int idx_separation_end_x;  
+	int idx_separation_start_y;
+	int idx_separation_end_y;  
 	// --> set branches
 	sepx_tree->ResetBranchAddresses();
 	sepx_tree->SetBranchAddress("time_separation_start",&time_separation_start_x);
 	sepx_tree->SetBranchAddress("time_separation_end",&time_separation_end_x);
+	sepx_tree->SetBranchAddress("idx_separation_start",&idx_separation_start_x);
+	sepx_tree->SetBranchAddress("idx_separation_end",&idx_separation_end_x);
 	sepy_tree->ResetBranchAddresses();
 	sepy_tree->SetBranchAddress("time_separation_start",&time_separation_start_y);
 	sepy_tree->SetBranchAddress("time_separation_end",&time_separation_end_y);
-
+	sepy_tree->SetBranchAddress("idx_separation_start",&idx_separation_start_y);
+	sepy_tree->SetBranchAddress("idx_separation_end",&idx_separation_end_y);
+	
 	// Final step: printout
 	// --> open file
 	ofstream ofs;
@@ -45,8 +53,14 @@ void QA_print_timestamps(Int_t Fill, Int_t scan)
 		ofs << time_separation_start_x << " "
 		    << time_separation_end_x << " " 
 		    << time << endl;
-		if(i==0) cout << " start time x-scan " << time_separation_start_x << endl;
-		if(i==(nx-1)) cout << " end time x-scan " << time_separation_end_x << endl;    
+		if(i==0) {
+		  cout << " start time x-scan " << time_separation_start_x
+		       << " start idx x-scan " << idx_separation_start_x<< endl;
+		}
+		if(i==(nx-1)) {
+		  cout << " end time x-scan " << time_separation_end_x
+		       << " end idx x-scan " << idx_separation_end_x<< endl;
+		}
 	}
 	const Int_t ny = sepy_tree->GetEntries();
 	for (Int_t i = 0; i<ny; i++)
@@ -56,8 +70,14 @@ void QA_print_timestamps(Int_t Fill, Int_t scan)
 		ofs << time_separation_start_y << " "
 		    << time_separation_end_y << " " 
 		    << time << endl;
-		if(i==0) cout << " start time y-scan " << time_separation_start_y << endl;
-		if(i==(nx-1)) cout << " end time y-scan " << time_separation_end_y << endl;    
+		if(i==0) {
+		  cout << " start time y-scan " << time_separation_start_y
+		       << " start idx y-scan " << idx_separation_start_y << endl;
+		}
+		if(i==(nx-1)) {
+		  cout << " end time y-scan " << time_separation_end_y
+		       << " end idx y-scan " << idx_separation_end_y<<  endl;
+		}
 	}
 	// --> close file
 	ofs.close();

@@ -65,5 +65,5 @@ set<int> bcBlacklist[20]; //Each index corresponds to a Fill: increase maximum (
 //-------------------------------------------------------
 // File format of the plots being printed out: kimc, June 18, 2021
 
-const char* FFormat = "eps"; //png, eps, pdf, etc...
+const char* FFormat = "pdf"; //png, eps, pdf, etc...
 #endif

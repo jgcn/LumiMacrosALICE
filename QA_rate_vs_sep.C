@@ -48,6 +48,9 @@ void QA_rate_vs_sep(Int_t Fill, const char *rate_name, const char *rate_type,
 	rate_tree->GetEntry(bc);
 	sep_tree->GetEntry(bc);
 
+	std::cout << " n_sep = " << n_sep << std::endl;
+	for(int i=0;i<n_sep;i++) std::cout << i << ": " << sep[i] << " ... " << rate[i]  << std::endl;
+	
 	// fill graph
 	TGraphErrors *gr = new TGraphErrors(n_sep,sep,rate,NULL,rate_error);
 	gr->SetMarkerStyle(20);
