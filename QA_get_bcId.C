@@ -21,7 +21,7 @@ void QA_get_bcId(int fill)
   }
 
   // for C++ format
-  cout << "int bunchB[20] = {" << endl;
+  cout << Form("int bunchB[%i] = {",nIBC) << endl;
   for(int i=0;i<(nIBC-1);i++) {
     cout << bunches[i] << ",";
   }

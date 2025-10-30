@@ -196,6 +196,106 @@ Double_t Get_ODC_y_scan1_7483(Double_t mid_time)
 }
 
 //------------------------------------------------------------
+// Evaluate the orbit-drift correction for fill 9128
+//------------------------------------------------------------
+
+double Get_ODC_x_scan_9128(double mid_time)
+{
+  double ts_zero = 1694118600;
+  double x = mid_time-ts_zero;
+  double x2 = x*x;
+  double x3 = x2*x;  
+  double p0 = 0.726938;
+  double p1 = -0.00408099;
+  double p2 = 1.9654e-06;
+  double p3 = -2.1898e-10;
+  double drift = p0+p1*x+p2*x2+p3*x3;
+  // divide by 1000 to get right units
+  return ((drift)/1000); 
+}
+
+double Get_ODC_y_scan_9128(double mid_time)
+{
+  double ts_zero = 1694118600;
+  double x = mid_time-ts_zero;
+  double x2 = x*x;
+  double x3 = x2*x;  
+  double p0 = 0.680681;
+  double p1 = 0.000731369;
+  double p2 = -4.47097e-07;
+  double p3 = 7.26573e-11;
+  double drift = p0+p1*x+p2*x2+p3*x3;
+  // divide by 1000 to get right units
+  return ((drift)/1000); 
+}
+
+//------------------------------------------------------------
+// Evaluate the orbit-drift correction for fill 10298
+//------------------------------------------------------------
+
+double Get_ODC_x_scan_10298(double mid_time)
+{
+  double ts_zero = 1730149602;
+  double x = mid_time-ts_zero;
+  double x2 = x*x;
+  double x3 = x2*x;  
+  double p0 = 0.0967456;
+  double p1 = 0.00157822;
+  double p2 = -1.37676e-06;
+  double p3 = 2.29739e-10;
+  double drift = p0+p1*x+p2*x2+p3*x3;
+  // divide by 1000 to get right units
+  return ((drift)/1000); 
+}
+
+double Get_ODC_y_scan_10298(double mid_time)
+{
+  double ts_zero = 1730149602;
+  double x = mid_time-ts_zero;
+  double x2 = x*x;
+  double x3 = x2*x;  
+  double p0 = 0.353946;
+  double p1 = 0.00231839;
+  double p2 = -2.99099e-06;
+  double p3 = 5.54014e-10;
+  double drift = p0+p1*x+p2*x2+p3*x3;
+  // divide by 1000 to get right units
+  return ((drift)/1000); 
+}
+
+//------------------------------------------------------------
+// Evaluate the orbit-drift correction for fill 10802
+//------------------------------------------------------------
+
+double Get_ODC_x_scan_10802(double mid_time)
+{
+  double ts_zero = 1751688947-100;
+  double x = mid_time-ts_zero;
+  double x2 = x*x;
+  double p0 = 0.436386;
+  double p1 = -0.000611404;
+  double p2 = 2.64785e-07;
+  double drift = p0+p1*x+p2*x2;
+  // divide by 1000 to get right units
+  return ((drift)/1000); 
+}
+
+double Get_ODC_y_scan_10802(double mid_time)
+{
+  double ts_zero = 1751688947-100;
+  double x = mid_time-ts_zero;
+  double x2 = x*x;
+  double p0 = 0.209415;
+  double p1 = -0.000588282;
+  double p2 = 2.94423e-07;
+  double drift = p0+p1*x+p2*x2;
+  // divide by 1000 to get right units
+  return ((drift)/1000); 
+}
+
+
+
+//------------------------------------------------------------
 // Evaluate the orbit-drift correction for the different fills
 //------------------------------------------------------------
 
@@ -246,6 +346,24 @@ Double_t Get_ODC_separations_Fill(Double_t mid_time, Int_t scan_type, Int_t scan
 		if (scan_type == 2 && scan == 1) return Get_ODC_y_scan1_7483(mid_time);
 		return 0;
 	}
+	else if (g_vdm_Fill == 9128)
+	{
+		if (scan_type == 1) return Get_ODC_x_scan_9128(mid_time);    
+		if (scan_type == 2) return Get_ODC_y_scan_9128(mid_time);
+		return 0;
+	}
+	else if (g_vdm_Fill == 10298)
+	{
+		if (scan_type == 1) return Get_ODC_x_scan_10298(mid_time);    
+		if (scan_type == 2) return Get_ODC_y_scan_10298(mid_time);
+		return 0;
+	}
+	else if (g_vdm_Fill == 10802)
+	{
+		if (scan_type == 1) return Get_ODC_x_scan_10802(mid_time);    
+		if (scan_type == 2) return Get_ODC_y_scan_10802(mid_time);
+		return 0;
+	}
 	else
 	{
 		cout << " Fill not implemented: returning zero " << endl;
@@ -294,8 +412,8 @@ void Get_ODC_separations(Int_t scan_type, Int_t scan)
 
 		Double_t corr = Get_ODC_separations_Fill(mid_time,scan_type,scan);
 		odc_sep[i] = sep[i]+corr;
-		//cout << " i " << i << " end " << time_end << " start " << time_start << endl;
-		//cout << " mid_time " << ((Long_t) mid_time) << " corr " << corr << " odc_sep " << odc_sep[i] << " sep " << sep[i] << endl;
+		//	cout << " i " << i << " end " << time_end << " start " << time_start << endl;
+		// cout << " mid_time " << ((Long_t) mid_time) << " corr " << corr << " odc_sep " << odc_sep[i] << " sep " << sep[i] << endl;
 	}
 
 	// now prepare name of output and reserve space to store it
