@@ -98,8 +98,10 @@ void QA_FitCompare_AllScans(Int_t Fill, const char *rate_name, const char *rate_
                     Double_t *par_err = new Double_t[npar];
 
                     TString cname = Form("Fit_%s_Fill%d_Scan%d_BC%d_Rate%s", fit_label, Fill, scan, bc, rate_name);
+		            const char* corrName = Form("CorrelationMatrix_i%i", bc);
+                    TH2D *hCorr = new TH2D(corrName, corrName, npar, 0, npar, npar, 0, npar); //can be written to file, if needed
                     chi2_dof = Fit_rate_separation(n_sep, sep, rate, rate_error, fit_type,
-                                                   area, rate_zero, par, par_err, cname.Data());
+                                                   area, rate_zero, par, par_err, hCorr, cname.Data());
 
                     Double_t *fit_vals = new Double_t[n_sep];
                     for (int j = 0; j < n_sep; ++j) {

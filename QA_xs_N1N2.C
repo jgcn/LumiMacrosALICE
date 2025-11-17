@@ -150,10 +150,11 @@ void QA_xs_N1N2(Int_t Fill,
 	if (Fill == 6864) { V0C = 56.5;	T0C = 27.5; }
 	if (Fill == 8379) { V0C = 48.0;	T0C = 51; }
  	if (Fill == 9128) { V0C = 51;	T0C = 52; }
+	if (Fill == 10802){ V0C = 1276;	T0C = 1157; }
 	if (!strcmp(rate_name, "aodV0")) { yMin = V0C-2.5; yMax = V0C+2.5; }
 	if (!strcmp(rate_name, "aodT0"))       { yMin = T0C-2.5; yMax = T0C+2.5; }
-	if (!strcmp(rate_name, "v0")) { yMin = V0C-2.5; yMax = V0C+2.5; }
-	if (!strcmp(rate_name, "t0"))       { yMin = T0C-2.5; yMax = T0C+2.5; }
+	if (!strcmp(rate_name, "v0")) { yMin = V0C-100; yMax = V0C+100; }
+	if (!strcmp(rate_name, "t0"))       { yMin = T0C-100; yMax = T0C+100; }
 	TCanvas *c1 = new TCanvas("c1","xs_histo", 1600, 800);
 	c1->cd()->SetBottomMargin(0.125);
 

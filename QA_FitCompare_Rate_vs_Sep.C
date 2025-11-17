@@ -10,13 +10,15 @@
 void QA_FitCompare_Rate_vs_Sep(Int_t Fill, const char *rate_name, const char *rate_type,
                             const char *sep_type, Int_t scan_type, Int_t scan, Int_t bc) {
     gStyle->SetOptStat(0);
-    gStyle->SetOptTitle(0);
+    //gStyle->SetOptTitle(0);
+    gStyle->SetOptFit(1);
 
    // const char* fit_names[] = {"GP6", "GP2", "DG", "Num"};
    //  const char* fit_names[] = {"GP2", "GP6","G","NUM", "DG"};
-          const char* fit_names[] = {"GP2", "GP6","G", "DG"};
-    int fit_types[] = {0, 1, 2, 4};
-    Color_t colors[] = {kRed, kBlue, kGreen+2, kMagenta};
+    //const char* fit_names[] = {"GP2", "GP6","G", "DG"};
+    const char* fit_names[] = {"GP2", "GP6","G", "DG", "CHEB4", "CHEB4G", "CHEB10"};
+    int fit_types[] = {0, 1, 2, 4, 5, 6, 7};
+    Color_t colors[] = {kRed, kOrange+1, kGreen+1, kCyan+1, kBlue, kViolet, kMagenta};
 
     Set_input_file_names(Fill);
     Set_pointers_to_input_files_and_trees();
@@ -67,7 +69,9 @@ void QA_FitCompare_Rate_vs_Sep(Int_t Fill, const char *rate_name, const char *ra
     mg->Add(grData, "P");
     leg->AddEntry(grData, "Datos", "p");
 
-    for (int i = 0; i < 4; ++i) {
+    TCanvas *cCorr[7]; //One canvas for correlation matrix for each fit type
+
+    for (int i = 0; i < 7; ++i) { //5 fit types
         Int_t fit_type = fit_types[i];
         const char* fit_label = fit_names[i];
 
@@ -75,10 +79,17 @@ void QA_FitCompare_Rate_vs_Sep(Int_t Fill, const char *rate_name, const char *ra
         Int_t npar = Get_number_par(fit_type);
         Double_t *par = new Double_t[npar];
         Double_t *par_err = new Double_t[npar];
+        TH2D *hCorr = new TH2D("hCorr", "Correlation Matrix", npar, 0, npar, npar, 0, npar);
 
         TString cname = Form("Fit_%s_Fill%d_Scan%d_BC%d", fit_label, Fill, scan, bc);
         chi2_dof = Fit_rate_separation(n_sep, sep, rate, rate_error, fit_type,
-                                       area, rate_zero, par, par_err, cname.Data());
+                                       area, rate_zero, par, par_err, hCorr, cname.Data());
+
+        const char* cNameCorr = Form("CorrMatrix_Fit_%s_Fill%d_Scan%d_BC%d", fit_label, Fill, scan, bc);
+        cCorr[i]= new TCanvas(cNameCorr, cNameCorr, 800, 600);
+        cCorr[i]->cd();
+        hCorr->Draw("colz text");
+        cCorr[i]->Update();
 
         Double_t *fit_vals = new Double_t[n_sep];
         for (int j = 0; j < n_sep; ++j) {
@@ -87,6 +98,8 @@ void QA_FitCompare_Rate_vs_Sep(Int_t Fill, const char *rate_name, const char *ra
             else if (fit_type == 1) fit_vals[j] = fit_GP6(x, par);
             else if (fit_type == 2) fit_vals[j] = fit_G(x, par);
             else if (fit_type == 4) fit_vals[j] = fit_DG(x, par);
+            else if (fit_type == 5) fit_vals[j] = fit_Cheb4(x, par);
+            else if (fit_type == 6) fit_vals[j] = fit_Cheb4G(x, par);
             else                    fit_vals[j] = NAN;
         }
 
@@ -104,11 +117,12 @@ void QA_FitCompare_Rate_vs_Sep(Int_t Fill, const char *rate_name, const char *ra
         delete[] par;
         delete[] par_err;
         delete[] fit_vals;
+        //delete c0;
     }
      
-     c->cd(); // important!
-     mg->SetTitle(Form("Rate vs Separation (%s - BC %d);Separation (mm);Rate [Hz]", rate_name, bc));
-     c->cd()->SetLogy();
+    c->cd(); // important!
+    mg->SetTitle(Form("Rate vs Separation (%s - BC %d);Separation (mm);Rate [Hz]", rate_name, bc));
+    c->cd()->SetLogy();
     mg->Draw("ALP"); // A=axes, L=lines, P=points
     leg->Draw();
     c->Update();

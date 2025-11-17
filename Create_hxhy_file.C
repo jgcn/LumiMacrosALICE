@@ -86,6 +86,17 @@ void Compute_RateIntegral(Int_t Fill, Int_t scan_type, Int_t scan,
 	Int_t Bunches[nIBC];
 	GetBunchIndices(Bunches);
 
+	//parameter histogram
+	TH1F *par_hist[Get_number_par(fit_type)];
+	char par_hist_name_temp[kg_string_size];
+	for(Int_t i=0; i<Get_number_par(fit_type); i++){
+		sprintf(par_hist_name_temp, "par[%d]", i);
+		par_hist[i] = new TH1F(par_hist_name_temp, par_hist_name_temp, nIBC, -0.5, nIBC-0.5);
+	}
+
+	//chi2 histogram
+	TH1F *chi2_hist = new TH1F("chi2_dof", "chi2/ndof", nIBC, -0.5, nIBC-0.5);
+	
 	for (Int_t k=0; k<nIBC; k++) // loop over bunches
 	{
 		// get info
@@ -98,7 +109,18 @@ void Compute_RateIntegral(Int_t Fill, Int_t scan_type, Int_t scan,
 		const char* cName3 = "WRONG_SCAN_TYPE";
 		if (scan_type == 1) cName3 = Form("%s_x", cName2);
 		if (scan_type == 2) cName3 = Form("%s_y", cName2);
-		chi2_dof = Fit_rate_separation(n_sep,sep, rate,rate_error, fit_type,area,rate_zero, par,par_err, cName3);
+		const char* corrName = Form("CorrelationMatrix_i%i_bc%i", k, Bunches[k]);
+        Int_t npar = Get_number_par(fit_type);
+        TH2D *hCorr = new TH2D(corrName, corrName, npar, 0, npar, npar, 0, npar); //can be written to file, if needed
+		chi2_dof = Fit_rate_separation(n_sep,sep, rate,rate_error, fit_type,area,rate_zero, par,par_err, hCorr, cName3);
+
+		//Produce a graph of parameter vs BC for every fit parameter
+		for(Int_t i=0; i<Get_number_par(fit_type); i++){
+			par_hist[i]->SetBinContent(k+1, par[i]);
+			par_hist[i]->SetBinError(k+1, par_err[i]);
+		}
+		//Produce a graph of chi2/ndof vs BC
+		chi2_hist->SetBinContent(k+1, chi2_dof);
 
 		/*
 		chi2_dof = Fit_rate_separation_minuit(
@@ -108,12 +130,15 @@ void Compute_RateIntegral(Int_t Fill, Int_t scan_type, Int_t scan,
 
 		// save output
 		h_tree->Fill();
+		//hCorr->Write(); //only if needed
 	} // end loop over bunches
 
 	// save
 	hFile->cd();
 	h_tree->SetDirectory(hFile);
 	h_tree->Write();
+	for(Int_t i=0; i<Get_number_par(fit_type); i++) par_hist[i]->Write();
+	chi2_hist->Write();
 	hFile->Close();
 
 	// clean up

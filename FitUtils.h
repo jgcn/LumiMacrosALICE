@@ -9,7 +9,7 @@
 // global variables
 //-------------------------------------------------------
 
-const char *g_fit_model_name[] = {"GP2", "GP6","G","NUM", "DG"};
+const char *g_fit_model_name[] = {"GP2", "GP6","G","NUM", "DG", "CHEB4", "CHEB4G", "CHEB2"};
 
 // these are needed by minuit ... ugly, but that is the way it is ...
 Int_t n_minuit;
@@ -42,10 +42,10 @@ Double_t fit_DG(Double_t *x, Double_t *p)
 	Double_t dx  = x[0] - p[1]; //p[1] = center
 	Double_t dx2 = dx*dx;
 	Double_t N1 = sqrt2pi_inv/p[2];
-	Double_t G1 = N1*TMath::Exp(-dx2/(2.0*p[2]*p[2]));
+	Double_t G1 = TMath::Exp(-dx2/(2.0*p[2]*p[2]));
 	Double_t N2 = sqrt2pi_inv/p[3];
-	Double_t G2 = N2*TMath::Exp(-dx2/(2.0*p[3]*p[3])); //p[2], p[3] = width of each Gaussian
-	return p[0] * (G1 + p[4]*G2); //kimc: p[0]/p[0]*p[4]: height, p[1]: common center, p[2]/p[3]: width
+	Double_t G2 = TMath::Exp(-dx2/(2.0*p[3]*p[3])); //p[2], p[3] = width of each Gaussian
+	return p[0] * (p[4]*G1 + (1-p[4])*G2); //kimc: p[0]/p[0]*p[4]: height, p[1]: common center, p[2]/p[3]: width
 }
 
 //-------------------------------------------------------
@@ -75,6 +75,63 @@ Double_t fit_GP6(Double_t *x, Double_t *p)
 }
 
 //-------------------------------------------------------
+// Model of a 4th order Chebyshev function
+//-------------------------------------------------------
+Double_t fit_Cheb4(Double_t *x, Double_t *p)
+{
+	Double_t fA = -0.1;
+	Double_t fB = 0.1;
+	Double_t dx = x[0]-p[1];
+	Double_t xx = 2.0 * (dx - fA)/(fB-fA) - 1;
+	Double_t T[7];
+	T[0] = 1;
+	T[1] = xx;
+	for(Int_t n=1; n<6; n++) T[n+1] = 2*xx*T[n] - T[n-1];
+	Double_t sum = p[0]*T[0];
+
+	return p[0]*(T[0]+p[2]*T[2]+p[3]*T[4]);
+}
+
+//-------------------------------------------------------
+// Model of a 4th order Chebyshev function times Gaussian
+//-------------------------------------------------------
+Double_t fit_Cheb4G(Double_t *x, Double_t *p)
+{
+	Double_t dx = x[0]-p[1];
+	Double_t dx2 = dx*dx;
+	Double_t Gx = TMath::Exp(-dx2/(2.0*p[2]*p[2]));
+	
+	Double_t fA = -0.1;
+	Double_t fB = 0.1;
+	Double_t xx = 2.0 * (dx - fA)/(fB-fA) - 1;
+	Double_t T[7];
+	T[0] = 1;
+	T[1] = xx;
+	for(Int_t n=1; n<6; n++) T[n+1] = 2*xx*T[n] - T[n-1];
+
+	return p[0]*Gx*(1+p[3]*T[2]+p[4]*T[4]);
+
+}
+
+//-------------------------------------------------------
+// Model of a 10th order Chebyshev function
+//-------------------------------------------------------
+Double_t fit_Cheb10(Double_t *x, Double_t *p)
+{
+	Double_t fA = -0.1;
+	Double_t fB = 0.1;
+	Double_t dx = x[0]-p[1];
+	Double_t xx = 2.0 * (dx - fA)/(fB-fA) - 1;
+	Double_t T[11];
+	T[0] = 1;
+	T[1] = xx;
+	for(Int_t n=1; n<11; n++) T[n+1] = 2*xx*T[n] - T[n-1];
+	Double_t sum = p[0]*T[0];
+
+	return p[0]*(1+p[2]*T[2]+p[3]*T[4]+p[4]*T[6]+p[5]*T[8]+p[6]*T[10]);
+}
+
+//-------------------------------------------------------
 // return number of parameters of a given model
 //-------------------------------------------------------
 
@@ -85,6 +142,9 @@ Int_t Get_number_par(Int_t fit_type)
 	else if (fit_type == 2) return 3; // G
 	else if (fit_type == 3) return 1; // NUM, this will be dummy parameters
 	else if (fit_type == 4) return 5; // DG
+	else if (fit_type == 5) return 4; // CHEB4
+	else if (fit_type == 6) return 5; // CHEB4G
+	else if (fit_type == 7) return 7; // CHEB10
 	else return -1;
 }
 
@@ -109,6 +169,10 @@ void Fit_model_init(Int_t fit_type, Double_t r_max, TF1 *model)
 		model->SetParameters(r_max,0.0,0.12,4,10,200);
 		model->SetParLimits(0,0,2.0*r_max);
 		model->SetParLimits(2,0.005,width_max);
+		//in case one wants to add more narrow limits
+		//model->SetParLimits(1,-0.02,0.02);
+		//model->SetParLimits(3,-500,500);
+		//model->SetParLimits(4,-100,100);
 	}
 	else if (fit_type == 2) // G
 	{
@@ -119,12 +183,25 @@ void Fit_model_init(Int_t fit_type, Double_t r_max, TF1 *model)
 	} 
 	else if (fit_type == 4) // DG
 	{
-		model->SetParNames("R0", "#mu", "#sigma_{0}", "#sigma_{1}", "R1");
-		model->SetParameters(r_max*0.9, 0.0, 0.1, 0.15, 0.1);
+		model->SetParNames("R0", "#mu", "#sigma_{0}", "#sigma_{1}", "#alpha");
+		model->SetParameters(r_max*0.9, 0.0, 0.03, 0.02, 0.5);
 		model->SetParLimits(0, 0,    r_max); //h0
-		model->SetParLimits(2, 0.01, width_max); //w0
-		model->SetParLimits(3, 0.01, width_max); //w1
-		model->SetParLimits(4, 0,    1); //h1
+		model->SetParLimits(2, 0.01, 0.5); //w0
+		model->SetParLimits(3, 0.01, 0.5); //w1
+		//model->SetParLimits(4, 0,    1); //h1
+	}
+	else if (fit_type == 5) // CH4
+	{
+		model->SetParNames("R", "#mu", "p2", "p4");
+	}
+	else if (fit_type == 6) // CH4G
+	{
+		model->SetParNames("R", "#mu", "#sigma", "p2", "p4");
+
+	}
+	else if (fit_type == 7) // CH10
+	{
+		model->SetParNames("R","#mu", "p2", "p4", "p6", "p8", "p10");
 	}
 
 	return;
@@ -295,6 +372,15 @@ Double_t Fit_rate_separation_minuit(Int_t n, Double_t *sep, Double_t *rate, Doub
   } else if (fit_type == 4) {
     nPar = Get_number_par(fit_type);
     fit_model = new TF1("fit_model",fit_DG, sep_min, sep_max, nPar);
+  } else if (fit_type == 5) {
+    nPar = Get_number_par(fit_type);
+    fit_model = new TF1("fit_model",fit_Cheb4, sep_min, sep_max, nPar);
+  } else if (fit_type == 6) {
+    nPar = Get_number_par(fit_type);
+    fit_model = new TF1("fit_model", fit_Cheb4G, sep_min, sep_max, nPar);
+  } else if (fit_type == 7) {
+    nPar = Get_number_par(fit_type);
+    fit_model = new TF1("fit_model", fit_Cheb10, sep_min, sep_max, nPar);
   } else {
     cout << " Fit model " << fit_type << " not known " << endl;
     exit(-105);
@@ -414,11 +500,12 @@ Double_t Fit_rate_separation_minuit(Int_t n, Double_t *sep, Double_t *rate, Doub
 
 Double_t Fit_rate_separation(
 		Int_t n, Double_t *sep, Double_t *rate, Double_t *rate_err, Int_t fit_type,
-		Double_t *area, Double_t *rate_zero, Double_t *par, Double_t *par_err,
+		Double_t *area, Double_t *rate_zero, Double_t *par, Double_t *par_err, TH2D *hCorrOut,
 		const char* cName
 		)
 // fit n points of rate(sep) using model given by fit_type
 // output area and error, rate at zero and error, parameters and error
+// correlation matrix added as a TH2 in output
 // returns chi2/dof ... returns -1 if fit does not converge
 {
 	// if fit_type = 3, do numeric integration
@@ -444,6 +531,9 @@ Double_t Fit_rate_separation(
 	else if (fit_type == 1) { fit_model = new TF1("fit_model", fit_GP6, sep_min,sep_max,Get_number_par(fit_type)); }
 	else if (fit_type == 2) { fit_model = new TF1("fit_model", fit_G,   sep_min,sep_max,Get_number_par(fit_type)); }
 	else if (fit_type == 4) { fit_model = new TF1("fit_model", fit_DG,  sep_min,sep_max,Get_number_par(fit_type)); }
+	else if (fit_type == 5) { fit_model = new TF1("fit_model", fit_Cheb4,  sep_min,sep_max,Get_number_par(fit_type)); }
+	else if (fit_type == 6) { fit_model = new TF1("fit_model", fit_Cheb4G, sep_min, sep_max,Get_number_par(fit_type)); }
+	else if (fit_type == 7) { fit_model = new TF1("fit_model", fit_Cheb10,  sep_min,sep_max,Get_number_par(fit_type)); }
 	else { 	cout << " Fit model " << fit_type << " not known " << endl; exit(-105); }
 
 	// initialize the model
@@ -520,7 +610,10 @@ Double_t Fit_rate_separation(
 			fitQuality = fit_model->GetChisquare()/((Double_t)fit_model->GetNDF()); //kimc
 			if ( gMinuit->fCstatu.Contains("CONVERGED") &&
 				 fitQuality > fitQuality_TL &&
-				 fitQuality < fitQuality_TU ) break; //Converged: stop
+				 fitQuality < fitQuality_TU &&
+				 !gMinuit->fCstatu.Contains("NOT POS-DEF") && //adding requirements on pos-def covariance matrix
+				 r->Status()==0 && 
+				 r->CovMatrixStatus()==3) break; //Converged: stop
 			else reFit++;
 		}//Refit
 
@@ -543,10 +636,28 @@ Double_t Fit_rate_separation(
     //c->Print(Form("../Fill-%d/QA_fits/%s.png", g_vdm_Fill, dName.c_str()));
 	*/
 
+	//Get covariance matrix; save in output as a TH2
+	TMatrixDSym *corrOut = new TMatrixDSym(r->GetCorrelationMatrix());
+	//corrOut->Print(); //prints covariance matrix, if needed
+	cout<<"Fit status = " << gMinuit->fCstatu <<" Cov. Matrix status = "<< r->CovMatrixStatus() <<endl;
+	int nparOut = corrOut->GetNrows();  // number of fit parameters
+	// Create a 2D histogram to hold the matrix
+	// Fill the histogram
+	for (int i = 0; i < nparOut; i++) {
+		TString parName = fit_model->GetParName(i);
+		hCorrOut->GetXaxis()->SetBinLabel(i+1, parName);
+		hCorrOut->GetYaxis()->SetBinLabel(i+1, parName);
+		for (int j = 0; j < nparOut; j++) {
+			hCorrOut->SetBinContent(i+1, j+1, (*corrOut)(i, j));
+		}
+	}
+	hCorrOut->GetZaxis()->SetRangeUser(-1,1);
+	hCorrOut->SetTitle(dName.c_str());
+
 	#if 1
 	//Plot for public note, June 25
 	gStyle->SetOptStat(0);
-	gStyle->SetOptFit(0);
+	gStyle->SetOptFit(1); //print parameter values on the fit plots
 
 	TCanvas* c1 = new TCanvas(dName.c_str(), dName.c_str(), 800, 600);
 	c1->cd()->SetLogy();
@@ -642,6 +753,42 @@ Double_t Fit_rate_separation(
 		rate_zero[0] = rate_zero[1] = 0;
 		return -2;
 	}
+
+	/*
+	//For a specific example case, save and print correlation matrix
+	if (strcmp(cName, "Fill10802_Nom_IntensityCorrFBCT_t0_F1_scan0_i6_bc584_y") == 0){
+		TMatrixDSym *corr = new TMatrixDSym(r->GetCorrelationMatrix());
+		cout<<"!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
+		corr->Print();
+		int npar = corr->GetNrows();  // number of fit parameters
+		// Create a 2D histogram to hold the matrix
+		TH2D *hCorr = new TH2D("hCorr", "Correlation Matrix", npar, 0, npar, npar, 0, npar);
+		// Fill the histogram
+		cout<<"-------- Fit Result -----------"<<endl;
+		for (int i = 0; i < npar; i++) {
+			cout<<fit_model->GetParName(i)<<" = "<<fit_model->GetParameter(i)<<" +/- "<<fit_model->GetParError(i)<<endl;
+			for (int j = 0; j < npar; j++) {
+				hCorr->SetBinContent(i+1, j+1, (*corr)(i, j));
+				TString parName = fit_model->GetParName(i);
+				hCorr->GetXaxis()->SetBinLabel(i+1, parName);
+    			hCorr->GetYaxis()->SetBinLabel(i+1, parName);
+			}
+		}
+		cout<<"--------------------------------"<<endl;
+		cout<<"-------- Integration limits -----------"<<endl;
+		cout<<"sep min = "<< sep_min << " ; sep max = " << sep_max <<endl;
+		TFile *outFile = new TFile("correlation_matrix_Fill10802_Nom_IntensityCorrFBCT_t0_F1_scan1_i6_bc584_y.root", "RECREATE");
+		corr->Write("Correlation Matrix");
+		hCorr->Write("hCorr");
+		outFile->Close();
+		delete outFile;
+		delete corr;
+		cout<<"correlation_matrix_Fill10802_Nom_IntensityCorrFBCT_t0_F1_scan1_i6_bc584_y.root"<<endl;
+		cout<<"Fit status = "<<r->Status()<<"   ; Cov. matrix status = "<< r->CovMatrixStatus()<<endl;
+		cout<<"!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
+		
+	}
+	*/
 
 	return chi2;
 }
