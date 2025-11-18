@@ -496,6 +496,18 @@ Int_t GetNumberInteractingBunchCrossings()
 	return Tree->GetEntries();
 }
 
+Int_t GetNumberBunchCrossingsTypeA()
+{
+	TTree *Tree = (TTree *) g_vdm_File->Get("BCnotA");
+	return Tree->GetEntries();
+}
+
+Int_t GetNumberBunchCrossingsTypeC()
+{
+	TTree *Tree = (TTree *) g_vdm_File->Get("BCnotC");
+	return Tree->GetEntries();
+}
+
 //-------------------------------------------------------
 void GetBucketInfo(Int_t *BucketA, Int_t *BucketC)
 {
@@ -519,6 +531,24 @@ void GetBucketInfo(Int_t *BucketA, Int_t *BucketC)
 	}
 }
 
+void GetBucketInfo_typeA(Int_t *BucketA)
+{
+	// get tree and set branches
+	Int_t nlhca;
+	TTree *Tree = (TTree *) g_vdm_File->Get("BCnotA");
+
+	TBranch *Branch2 = Tree->GetBranch("nlhcA");
+	Branch2->SetAddress(&nlhca);
+
+	// loop over tree to fill in info
+	Int_t nBC = Tree->GetEntries();
+	for (Int_t i=0; i<nBC; i++)
+	{
+		Tree->GetEntry(i);
+		BucketA[i] = nlhca;
+	}
+}
+
 //-------------------------------------------------------
 void GetBunchIndices(Int_t *bunches)
 {
@@ -526,6 +556,42 @@ void GetBunchIndices(Int_t *bunches)
 	Int_t bc;
 	TTree *Tree = (TTree *) g_vdm_File->Get("BCinteracting");
 	TBranch *Branch = Tree->GetBranch("BC");
+	Branch->SetAddress(&bc);
+
+	// loop over tree to fill in info
+	Int_t nBC = Tree->GetEntries();
+	for (Int_t i=0; i<nBC; i++)
+	{
+		Tree->GetEntry(i);
+		bunches[i] = bc;
+	}
+	return;
+}
+
+void GetBunchIndices_typeA(Int_t *bunches)
+{
+	// get tree and set branches
+	Int_t bc;
+	TTree *Tree = (TTree *) g_vdm_File->Get("BCnotA");
+	TBranch *Branch = Tree->GetBranch("BCA");
+	Branch->SetAddress(&bc);
+
+	// loop over tree to fill in info
+	Int_t nBC = Tree->GetEntries();
+	for (Int_t i=0; i<nBC; i++)
+	{
+		Tree->GetEntry(i);
+		bunches[i] = bc;
+	}
+	return;
+}
+
+void GetBunchIndices_typeC(Int_t *bunches)
+{
+	// get tree and set branches
+	Int_t bc;
+	TTree *Tree = (TTree *) g_vdm_File->Get("BCnotC");
+	TBranch *Branch = Tree->GetBranch("BCC");
 	Branch->SetAddress(&bc);
 
 	// loop over tree to fill in info
