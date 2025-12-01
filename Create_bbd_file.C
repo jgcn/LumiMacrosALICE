@@ -66,20 +66,58 @@ void Init_parameters(Int_t Fill)
 		kg_Qy = 59.32;
 		kg_Energy = 6369.0; // [GeV]
 	}
+	//-------------------------------------------------------
+	// following fills are from run 3
 
-	else if (Fill == 8379 || Fill == 9128)
+	else if (Fill == 8379) // pp 2022
         {
                 kg_beta_x = kg_beta_y = 19.2; // [m]
                 kg_Qx = 62.31;
                 kg_Qy = 60.317;
-                kg_Energy = 6369.0; // [GeV]
+                kg_Energy = 6797.64; // [GeV]
         }
-        else if (Fill == 9240)
+	else if (Fill == 9128) // pp 2023
+        {
+                kg_beta_x = kg_beta_y = 19.2; // [m]
+                kg_Qx = 62.31;
+                kg_Qy = 60.317;
+                kg_Energy = 6798; // [GeV]
+        }
+	
+        else if (Fill == 9240) // Pb-Pb 2023
         {
                 kg_beta_x = kg_beta_y = 0.5; // [m]
                 kg_Qx = 62.31;
                 kg_Qy = 60.32;
-                kg_Energy = 6369.0; // [GeV]
+                kg_Energy = 6797.76; // [GeV]
+        }
+        else if (Fill == 9644) // pp 2024
+        {
+                kg_beta_x = kg_beta_y = 19.2; // [m]
+                kg_Qx = 62.31;
+                kg_Qy = 60.32;
+                kg_Energy = 6797.88; // [GeV]
+        }
+        else if (Fill == 10298) // pp 2024 ref
+        {
+                kg_beta_x = kg_beta_y = 10.; // [m]
+                kg_Qx = 62.313;
+                kg_Qy = 60.32;
+                kg_Energy = 2677.8; // [GeV]
+        }
+        else if (Fill == 10782) // pO 2025
+        {
+                kg_beta_x = kg_beta_y = 1; // [m]
+                kg_Qx = 62.31;
+                kg_Qy = 60.32;
+                kg_Energy = 6796.8; // [GeV]
+        }
+        else if (Fill == 10802) // OO 2025
+        {
+                kg_beta_x = kg_beta_y = 0.5; // [m]
+                kg_Qx = 62.31;
+                kg_Qy = 60.32;
+                kg_Energy = 5355.24; // [GeV]
         }
 
 	return;
