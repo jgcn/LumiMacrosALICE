@@ -196,6 +196,44 @@ Double_t Get_ODC_y_scan1_7483(Double_t mid_time)
 }
 
 //------------------------------------------------------------
+// Evaluate the orbit-drift correction for fill 8379
+//------------------------------------------------------------
+
+double Get_ODC_x_scan_8379(double mid_time)
+{
+  double ts_zero = 1668080566;
+  double x = mid_time-ts_zero;
+  double x2 = x*x;
+  double x3 = x2*x;  
+  double x4 = x3*x;  
+  double p0 = 2.03165;
+  double p1 = -0.0076674;
+  double p2 = 6.74285e-06;
+  double p3 = -2.04903e-09;
+  double p4 = 1.90995e-13;
+  double drift = p0+p1*x+p2*x2+p3*x3+p4*x4;
+  // divide by 1000 to get right units
+  return ((drift)/1000); 
+}
+
+double Get_ODC_y_scan_8379(double mid_time)
+{
+  double ts_zero = 1668080566;
+  double x = mid_time-ts_zero;
+  double x2 = x*x;
+  double x3 = x2*x;  
+  double x4 = x3*x;  
+  double p0 = 0.43919;
+  double p1 = 0.000575499;
+  double p2 = -8.77738e-07;
+  double p3 = 2.90004e-10;
+  double p4 = -3.04084e-14;
+  double drift = p0+p1*x+p2*x2+p3*x3+p4*x4;
+  // divide by 1000 to get right units
+  return ((drift)/1000); 
+}
+
+//------------------------------------------------------------
 // Evaluate the orbit-drift correction for fill 9128
 //------------------------------------------------------------
 
@@ -230,6 +268,85 @@ double Get_ODC_y_scan_9128(double mid_time)
 }
 
 //------------------------------------------------------------
+// Evaluate the orbit-drift correction for fill 9240
+//------------------------------------------------------------
+
+double Get_ODC_x_scan_9240(double mid_time)
+{
+  double ts_zero = 1696964913;
+  double x = mid_time-ts_zero;
+  double x2 = x*x;
+  double x3 = x2*x;  
+  double x4 = x3*x;  
+  double p0 =-0.0683409;
+  double p1 = 0.000624182;
+  double p2 = -6.95696e-07;
+  double p3 = 1.8181e-10;
+  double p4 = -8.61281e-15;
+  double drift = p0+p1*x+p2*x2+p3*x3+p4*x4;
+  // divide by 1000 to get right units
+  return ((drift)/1000); 
+}
+
+
+double Get_ODC_y_scan_9240(double mid_time)
+{
+  double ts_zero = 1696964913;
+  double x = mid_time-ts_zero;
+  double x2 = x*x;
+  double x3 = x2*x;  
+  double x4 = x3*x;  
+  double p0 = -0.0361928;
+  double p1 = 0.00194447;
+  double p2 = -3.28432e-06;
+  double p3 = 1.48412e-09;
+  double p4 = -1.93381e-13;
+  double drift = p0+p1*x+p2*x2+p3*x3+p4*x4;
+  // divide by 1000 to get right units
+  return ((drift)/1000); 
+}
+
+
+//------------------------------------------------------------
+// Evaluate the orbit-drift correction for fill 9644
+//------------------------------------------------------------
+
+double Get_ODC_x_scan_9644(double mid_time)
+{
+  double ts_zero = 1716073902;
+  double x = mid_time-ts_zero;
+  double x2 = x*x;
+  double x3 = x2*x;  
+  double x4 = x3*x;  
+  double p0 = -1.96709;
+  double p1 = 0.00762414;
+  double p2 = -4.28882e-06;
+  double p3 = 1.33728e-09;
+  double p4 = -1.46303e-13;
+  double drift = p0+p1*x+p2*x2+p3*x3+p4*x4;
+  // divide by 1000 to get right units
+  return ((drift)/1000); 
+}
+
+
+double Get_ODC_y_scan_9644(double mid_time)
+{
+  double ts_zero = 1716073902;
+  double x = mid_time-ts_zero;
+  double x2 = x*x;
+  double x3 = x2*x;  
+  double x4 = x3*x;  
+  double p0 = -0.837106;
+  double p1 = 0.00193528;
+  double p2 = 6.69264e-07;
+  double p3 = -1.20567e-10;
+  double p4 = -9.20888e-15;
+  double drift = p0+p1*x+p2*x2+p3*x3+p4*x4;
+  // divide by 1000 to get right units
+  return ((drift)/1000); 
+}
+
+//------------------------------------------------------------
 // Evaluate the orbit-drift correction for fill 10298
 //------------------------------------------------------------
 
@@ -259,6 +376,44 @@ double Get_ODC_y_scan_10298(double mid_time)
   double p2 = -2.99099e-06;
   double p3 = 5.54014e-10;
   double drift = p0+p1*x+p2*x2+p3*x3;
+  // divide by 1000 to get right units
+  return ((drift)/1000); 
+}
+
+//------------------------------------------------------------
+// Evaluate the orbit-drift correction for fill 10782
+//------------------------------------------------------------
+
+double Get_ODC_x_scan_10782(double mid_time)
+{
+  double ts_zero = 1751422865;
+  double x = mid_time-ts_zero;
+  double x2 = x*x;
+  double x3 = x2*x;  
+  double x4 = x3*x;  
+  double p0 = -0.0387934;
+  double p1 = -0.000693912;
+  double p2 = 6.10076e-07;
+  double p3 = -1.6065e-10;
+  double p4 = 1.3768e-14;
+  double drift = p0+p1*x+p2*x2+p3*x3+p4*x4;
+  // divide by 1000 to get right units
+  return ((drift)/1000); 
+}
+
+double Get_ODC_y_scan_10782(double mid_time)
+{
+  double ts_zero = 1751422865;
+  double x = mid_time-ts_zero;
+  double x2 = x*x;
+  double x3 = x2*x;  
+  double x4 = x3*x;  
+  double p0 =  -0.227594;
+  double p1 = 0.00121279;
+  double p2 = -1.90979e-06;
+  double p3 = 6.9601e-10;
+  double p4 = -7.01022e-14;
+  double drift = p0+p1*x+p2*x2+p3*x3+p4*x4;
   // divide by 1000 to get right units
   return ((drift)/1000); 
 }
@@ -346,16 +501,40 @@ Double_t Get_ODC_separations_Fill(Double_t mid_time, Int_t scan_type, Int_t scan
 		if (scan_type == 2 && scan == 1) return Get_ODC_y_scan1_7483(mid_time);
 		return 0;
 	}
+	else if (g_vdm_Fill == 8379)
+	{
+		if (scan_type == 1) return Get_ODC_x_scan_8379(mid_time);    
+		if (scan_type == 2) return Get_ODC_y_scan_8379(mid_time);
+		return 0;
+	}
 	else if (g_vdm_Fill == 9128)
 	{
 		if (scan_type == 1) return Get_ODC_x_scan_9128(mid_time);    
 		if (scan_type == 2) return Get_ODC_y_scan_9128(mid_time);
 		return 0;
 	}
+	else if (g_vdm_Fill == 9240)
+	{
+		if (scan_type == 1) return Get_ODC_x_scan_9240(mid_time);    
+		if (scan_type == 2) return Get_ODC_y_scan_9240(mid_time);
+		return 0;
+	}
+	else if (g_vdm_Fill == 9644)
+	{
+		if (scan_type == 1) return Get_ODC_x_scan_9644(mid_time);    
+		if (scan_type == 2) return Get_ODC_y_scan_9644(mid_time);
+		return 0;
+	}
 	else if (g_vdm_Fill == 10298)
 	{
 		if (scan_type == 1) return Get_ODC_x_scan_10298(mid_time);    
 		if (scan_type == 2) return Get_ODC_y_scan_10298(mid_time);
+		return 0;
+	}
+	else if (g_vdm_Fill == 10782)
+	{
+		if (scan_type == 1) return Get_ODC_x_scan_10782(mid_time);    
+		if (scan_type == 2) return Get_ODC_y_scan_10782(mid_time);
 		return 0;
 	}
 	else if (g_vdm_Fill == 10802)

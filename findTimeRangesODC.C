@@ -15,6 +15,21 @@ int64_t endTime[3];
 
 void initRanges(int fill, int scan) {
   int offset = 100; // seconds
+  if (fill == 8379 && scan == 0) {
+    startTime[0] = 1668080744-offset;
+    endTime[0] = 1668080744;
+    startTime[1] = 1668081675;
+    endTime[1] = 1668081877;
+    startTime[2] = 1668082810;
+    endTime[2] = 1668082810+offset;
+  } else   if (fill == 8379 && scan == 1) {
+    startTime[0] = 1668083731-offset;
+    endTime[0] = 1668083731;
+    startTime[1] = 1668084664;
+    endTime[1] = 1668084862;
+    startTime[2] = 1668085795;
+    endTime[2] = 1668085795+offset;
+  }
   if (fill == 9128 && scan == 0) {
     startTime[0] = 1694118912-offset;
     endTime[0] = 1694118912;
@@ -30,6 +45,36 @@ void initRanges(int fill, int scan) {
     startTime[2] = 1694123548;
     endTime[2] = 1694123548+offset;
   }
+  if (fill == 9240 && scan == 0) {
+    startTime[0] = 1696965052-offset;
+    endTime[0] = 1696965052;
+    startTime[1] = 1696965884;
+    endTime[1] = 1696966032;
+    startTime[2] = 1696966865;
+    endTime[2] = 1696966865+offset;
+  } else   if (fill == 9240 && scan == 1) {
+    startTime[0] = 1696967005-offset;
+    endTime[0] = 1696967005;
+    startTime[1] = 1696967838;
+    endTime[1] = 1696967994;
+    startTime[2] = 1696968825;
+    endTime[2] = 1696968825+offset;
+  }
+  if (fill == 9644 && scan == 0) {
+    startTime[0] = 1716074080-offset;
+    endTime[0] = 1716074080;
+    startTime[1] = 1716074983;
+    endTime[1] = 1716075207;
+    startTime[2] = 1716076108;
+    endTime[2] = 1716076108+offset;
+  } else   if (fill == 9644 && scan == 1) {
+    startTime[0] = 1716076416-offset;
+    endTime[0] = 1716076416;
+    startTime[1] = 1716077319;
+    endTime[1] = 1716077559;
+    startTime[2] = 1716078460;
+    endTime[2] = 1716078460+offset;
+  }
   if (fill == 10298 && scan == 0) {
     startTime[0] = 1730149754-offset;
     endTime[0] = 1730149754;
@@ -44,6 +89,21 @@ void initRanges(int fill, int scan) {
     endTime[1] = 1730152673;
     startTime[2] = 1730153529;
     endTime[2] = 1730153529+offset;
+  } 
+  if (fill == 10782 && scan == 0) {
+    startTime[0] = 1751423005-offset;
+    endTime[0] = 1751423005;
+    startTime[1] = 1751423700;
+    endTime[1] = 1751423832;
+    startTime[2] = 1751424529;
+    endTime[2] = 1751424529+offset;
+  } else   if (fill == 10782 && scan == 1) {
+    startTime[0] = 1751426469-offset;
+    endTime[0] = 1751426469;
+    startTime[1] = 1751427166;
+    endTime[1] = 1751427288;
+    startTime[2] = 1751427985;
+    endTime[2] = 1751427985+offset;
   } 
   if (fill == 10802 && scan == 0) {
     startTime[0] = 1751688982-offset;
