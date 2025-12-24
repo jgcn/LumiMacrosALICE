@@ -14,8 +14,11 @@ void Set_input_file_names(Int_t Fill)
   // 10782 ->pO , 10802 -> OO, 10813 -> NeNe
   // 10813 -> pp 2025
   // 9240 -> PbPb 2023, 10338 -> PbPb 2024
+  // 10824 pp 25
+
        	if (Fill == 8379 || Fill ==9128 || Fill ==9240 || Fill ==9644 || Fill ==10298
-	    || Fill ==10782 || Fill ==10802 || Fill ==10813 || Fill ==10824 || Fill == 10338)  
+	    || Fill ==10782 || Fill ==10802 || Fill ==10813 || Fill ==10824 || Fill == 10338
+	    || Fill == 10824)  
 	{
 		// set fill and number of scans in the fill
 		g_vdm_Fill = Fill;
