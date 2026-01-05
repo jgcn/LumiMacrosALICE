@@ -20,10 +20,10 @@ void QA_print_timestamps(Int_t Fill, Int_t scan)
 	TTree *sepy_tree = (TTree *) sepy_file->Get("SepInfo");
 
 	// Next step: prepare variables
-	Long64_t time_separation_start_x;
-	Long64_t time_separation_end_x;
-	Long64_t time_separation_start_y;
-	Long64_t time_separation_end_y;
+	int64_t time_separation_start_x;
+	int64_t time_separation_end_x;
+	int64_t time_separation_start_y;
+	int64_t time_separation_end_y;
 	int idx_separation_start_x;
 	int idx_separation_end_x;  
 	int idx_separation_start_y;

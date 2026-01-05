@@ -104,12 +104,14 @@ void QA_comp_rate_vs_sep(Int_t Fill, const char *rate_name1, const char *rate_ty
 	int mid = (n_sep>>1)+1;
 	double r01 = rate1[mid];
 	double r02 = rate2[mid];
-	std::cout << " r02/r01 = " << (r02/r01) << endl;
+	// std::cout << " r02/r01 = " << (r02/r01) << endl;
 	for(int i=0;i<n_sep;i++) {
 	  // ratio[i] = (rate1[i]/r01)/(rate2[i]/r02);
-	  ratio[i] = rate1[i]/rate2[i];
+	  ratio[i] = (rate2[i]>0?rate1[i]/rate2[i]:0);
 	  // error computation not correct
-	  ratio_err[i] =ratio[i]*TMath::Sqrt(TMath::Power(rate_error1[i]/rate1[i],2)+TMath::Power(rate_error2[i]/rate2[i],2));
+	  ratio_err[i] =  (rate2[i]>0?
+			   ratio[i]*TMath::Sqrt(TMath::Power(rate_error1[i]/rate1[i],2)+TMath::Power(rate_error2[i]/rate2[i],2))
+			   :0);
 	}
 	TGraphErrors *grR = new TGraphErrors(n_sep,sep2,ratio,NULL,ratio_err);
 	grR->SetMarkerStyle(20);
@@ -183,10 +185,89 @@ void doFill(const char *rate_name1, const char *rate_name2, int fill, int nBC = 
     QA_comp_rate_vs_sep(fill,rate_name1,"Raw","Nom",rate_name2,"Raw","Nom",1,1,iBC);
     QA_comp_rate_vs_sep(fill,rate_name1,"Raw","Nom",rate_name2,"Raw","Nom",2,1,iBC);    
   }
-  /*
-to merge use
-gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=merged.pdf *pdf
-  */
 }
+
+  /*
+.L QA_comp_rate_vs_sep.C+
+doFill("v0","t0",8379,20)
+doFill("aodfddvtx","aodft0vtx",8379,20)
+doFill("v0","aodfddvtx",8379,20)
+doFill("t0","aodft0vtx",8379,20)
+
+doFill("v0","t0",9128,20)
+doFill("aodfddvtx","aodft0vtx",9128,20)
+doFill("v0","aodfddvtx",9128,20)
+doFill("t0","aodft0vtx",9128,20)
+
+doFill("v0","t0",9644,20)
+doFill("aodfddvtx","aodft0vtx",9644,20)
+doFill("v0","aodfddvtx",9644,20)
+doFill("t0","aodft0vtx",9644,20)
+
+doFill("v0","t0",10298,20)
+doFill("aodfddvtx","aodft0vtx",10298,20)
+doFill("v0","aodfddvtx",10298,20)
+doFill("t0","aodft0vtx",10298,20)
+
+doFill("v0","t0",10824,20)
+doFill("aodfddvtx","aodft0vtx",10824,20)
+doFill("v0","aodfddvtx",10824,20)
+doFill("t0","aodft0vtx",10824,20)
+
+doFill("v0","t0",10782,32)
+doFill("aodzn","aodft0vtx",10782,32)
+doFill("v0","aodzn",10782,32)
+doFill("t0","aodft0vtx",10782,32)
+doFill("aodfddvtx","aodft0vtx",10782,32)
+
+doFill("v0","t0",10802,40)
+doFill("aodzn","aodft0vtx",10802,40)
+doFill("aodzn","aodft0ceft0vtx",10802,40)
+doFill("v0","aodzn",10802,40)
+doFill("t0","aodft0vtx",10802,40)
+doFill("t0","aodft0ceft0vtx",10802,40)
+doFill("aodfddvtx","aodft0vtx",10802,40)
+
+to merge use
+cd aodPlots
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/v0_t0_8379_merged.pdf rate1_v0_rate2_t0_fill_8379*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/aodfddvtx_aodft0vtx_8379_merged.pdf rate1_aodfddvtx_rate2_aodft0vtx_fill_8379*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/v0_aodfddvtx_8379_merged.pdf rate1_v0_rate2_aodfddvtx_fill_8379*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/t0_aodft0vtx_8379_merged.pdf rate1_t0_rate2_aodft0vtx_fill_8379*pdf
+
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/v0_t0_9128_merged.pdf rate1_v0_rate2_t0_fill_9128*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/aodfddvtx_aodft0vtx_9128_merged.pdf rate1_aodfddvtx_rate2_aodft0vtx_fill_9128*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/v0_aodfddvtx_9128_merged.pdf rate1_v0_rate2_aodfddvtx_fill_9128*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/t0_aodft0vtx_9128_merged.pdf rate1_t0_rate2_aodft0vtx_fill_9128*pdf
+
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/v0_t0_9644_merged.pdf rate1_v0_rate2_t0_fill_9644*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/aodfddvtx_aodft0vtx_9644_merged.pdf rate1_aodfddvtx_rate2_aodft0vtx_fill_9644*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/v0_aodfddvtx_9644_merged.pdf rate1_v0_rate2_aodfddvtx_fill_9644*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/t0_aodft0vtx_9644_merged.pdf rate1_t0_rate2_aodft0vtx_fill_9644*pdf
+
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/v0_t0_10298_merged.pdf rate1_v0_rate2_t0_fill_10298*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/aodfddvtx_aodft0vtx_10298_merged.pdf rate1_aodfddvtx_rate2_aodft0vtx_fill_10298*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/v0_aodfddvtx_10298_merged.pdf rate1_v0_rate2_aodfddvtx_fill_10298*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/t0_aodft0vtx_10298_merged.pdf rate1_t0_rate2_aodft0vtx_fill_10298*pdf
+
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/v0_t0_10824_merged.pdf rate1_v0_rate2_t0_fill_10824*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/aodfddvtx_aodft0vtx_10824_merged.pdf rate1_aodfddvtx_rate2_aodft0vtx_fill_10824*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/v0_aodfddvtx_10824_merged.pdf rate1_v0_rate2_aodfddvtx_fill_10824*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/t0_aodft0vtx_10824_merged.pdf rate1_t0_rate2_aodft0vtx_fill_10824*pdf
+
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/v0_t0_10782_merged.pdf rate1_v0_rate2_t0_fill_10782*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/aodzn_aodft0vtx_10782_merged.pdf rate1_aodzn_rate2_aodft0vtx_fill_10782*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/v0_aodzn_10782_merged.pdf rate1_v0_rate2_aodzn_fill_10782*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/t0_aodft0vtx_10782_merged.pdf rate1_t0_rate2_aodft0vtx_fill_10782*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/aodfddvtx_aodft0vtx_10782_merged.pdf rate1_aodfddvtx_rate2_aodft0vtx_fill_10782*pdf
+
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/v0_t0_10802_merged.pdf rate1_v0_rate2_t0_fill_10802*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/aodzn_aodft0vtx_10802_merged.pdf rate1_aodzn_rate2_aodft0vtx_fill_10802*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/aodzna_odft0ceft0vtx_10802_merged.pdf rate1_aodzn_rate2_aodft0ceft0vtx_fill_10802*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/v0_aodzn_10802_merged.pdf rate1_v0_rate2_aodzn_fill_10802*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/t0_aodft0vtx_10802_merged.pdf rate1_t0_rate2_aodft0vtx_fill_10802*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/t0_aodft0ceft0vtx_10802_merged.pdf rate1_t0_rate2_aodft0ceft0vtx_fill_10802*pdf
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=../compSummary/aodfddvtx_aodft0vtx_10802_merged.pdf rate1_aodfddvtx_rate2_aodft0vtx_fill_10802*pdf
+  */
 
 
