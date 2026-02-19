@@ -30,7 +30,6 @@ void GetSeparation(Double_t *sep, const char *separation_name, Int_t scan, Int_t
 
 //-------------------------------------------------------
 // compare NOM to ODC
-
 void QA_compare_NOMODC(Int_t Fill, Int_t scan, Int_t scan_type, Int_t bc)
 // scan_type: 1 => x-scan; 2 => y-scan
 {
@@ -93,6 +92,74 @@ void QA_compare_NOMODC(Int_t Fill, Int_t scan, Int_t scan_type, Int_t bc)
   delete [] nom;
   delete [] odc;
    delete [] odc_nom;
+  
+}
+
+//-------------------------------------------------------
+// compare to separations
+void QA_compare_2_sep(Int_t Fill, Int_t scan, Int_t scan_type, Int_t bc, const char* sep1Name, const char*sep2Name)
+// scan_type: 1 => x-scan; 2 => y-scan
+{
+  // initialize
+  Set_input_file_names(Fill);
+  Set_pointers_to_input_files_and_trees();
+  
+  // reserve space for separations
+  Int_t n_sep = FindNumberSeparations(scan_type, scan);
+  Double_t *sep1 = new Double_t[n_sep];
+  Double_t *sep2 = new Double_t[n_sep];
+
+  // get the separations
+  GetSeparation(sep1,sep1Name,scan,scan_type,bc);
+  GetSeparation(sep2,sep2Name,scan,scan_type,bc);
+  
+  // make differences
+  Double_t *sep1_sep2 = new Double_t[n_sep];
+   for(Int_t i=0;i<n_sep;i++) {
+    // factor of 1000 to go to mum
+    sep1_sep2[i] = (sep1[i]-sep2[i])*1000;
+   }
+
+  // define the limits for the plot
+  // --> separation
+  Double_t sep_min = 0;
+  Double_t sep_max = 0;
+  // --> separation diffs
+  Double_t dif_min = 0;
+  Double_t dif_max = 0;
+  for(Int_t i=0;i<n_sep;i++) {
+    if(sep1[i]<sep_min) sep_min=sep1[i];
+    if(sep1[i]>sep_max) sep_max=sep1[i];
+    if(sep1_sep2[i]<dif_min) dif_min=sep1_sep2[i];
+    if(sep1_sep2[i]>dif_max) dif_max=sep1_sep2[i];
+    // std::cout << " i " << i << " sep1 " << sep1[i] << " sep2 " << sep2[i] << " sep1-sep2 " << sep1_sep2[i] << std::endl; 
+  }
+  sep_min*=1.2;
+  sep_max*=1.2;  
+  dif_min*=1.2;
+  dif_max*=1.2;  
+  
+  // make graphs
+  TGraph *gr_sep1_sep2 = new TGraph(n_sep,sep1,sep1_sep2);
+  gr_sep1_sep2->SetMarkerStyle(20);gr_sep1_sep2->SetMarkerColor(1);
+
+  // plot graphs
+  gStyle->SetOptStat(0);
+  gStyle->SetOptTitle(0);
+  TCanvas *sep_C = new TCanvas(Form("%s-%s_C",sep1Name,sep2Name),"separation differences versus separation",600,400);
+  TH1F* frame = gPad->DrawFrame(sep_min,dif_min,sep_max,dif_max);
+  frame->SetTitle(";separation (mm); separation difference (#mum)");
+  gr_sep1_sep2->Draw("p,e1,same");
+   TLegend *legend = new TLegend(0.15,0.7,0.35,0.9);
+  legend->SetBorderSize(0);
+  legend->SetFillStyle(0);
+  legend->AddEntry(gr_sep1_sep2,Form("%s-%s",sep1Name,sep2Name),"p");
+  legend->Draw();
+
+  // clean up
+  delete [] sep1;
+  delete [] sep2;
+  delete [] sep1_sep2;
   
 }
 
