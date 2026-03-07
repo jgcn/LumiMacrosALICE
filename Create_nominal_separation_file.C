@@ -37,11 +37,10 @@ void Find_separations(Int_t scan_type, Int_t scan_num, Int_t IdxStart, Int_t Idx
 	Int_t counter = 0; // internal use only
 	Double_t *sep_array = new Double_t[100]; // internal use only
 	Double_t slope_change = 0;  // internal use only
-
 	for (Int_t j=IdxStart;j<IdxEnd;j++)
 	{
-		// cout << " idx = " << IdxStart << " -- " << IdxEnd << endl;
 		g_vdm_Tree->GetEntry(j);
+	        // cout << " j = " << j << " aqflag " << aqflag << " nsep " << nsep << endl;
 		if (aqflag==0) continue;
 
 		if (TMath::Abs(nsep-nsep_old)>small) // new separation
@@ -137,4 +136,13 @@ void Create_nominal_separation_file(Int_t Fill)
 	}
 
 	return;
+}
+
+void Create_nominal_separation_file_OO_offset()
+// for OO run for the third scan
+{
+   Set_input_file_names(10802);
+   Set_pointers_to_input_files_and_trees();
+   Find_separations(1,2,2592,2981); //x-scans
+   Find_separations(2,2,2999,3389); //y-scans
 }
